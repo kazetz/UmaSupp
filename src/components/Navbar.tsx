@@ -44,8 +44,8 @@ export default function Navbar({ page, navigate }: Props) {
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <div className="flex h-16 items-center justify-between gap-4">
           <button onClick={() => go('home')} className="flex items-center gap-2 shrink-0">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gold-500 shadow-sm">
-              <span className="text-xl">🐴</span>
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl overflow-hidden shadow-sm">
+              <img src="/LOGO_PNG.png" alt="UmaSupp Logo" className="h-full w-full object-cover" />
             </div>
             <div className="flex flex-col leading-none">
               <span className="font-display text-xl font-extrabold text-turf-700">
