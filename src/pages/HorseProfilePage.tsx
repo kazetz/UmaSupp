@@ -19,7 +19,7 @@ interface Props {
 const TIER_STYLES = {
   rumput: { ring: 'ring-turf-300', bg: 'bg-turf-100', text: 'text-turf-700', btn: 'bg-turf-600 hover:bg-turf-700', icon: Sparkles },
   wortel: { ring: 'ring-clay-300', bg: 'bg-clay-50', text: 'text-clay-700', btn: 'bg-clay-500 hover:bg-clay-600', icon: Zap },
-  apel: { ring: 'ring-gold-400', bg: 'bg-gold-50', text: 'text-gold-700', btn: 'gold-gradient hover:opacity-90', icon: Crown },
+  apel: { ring: 'ring-gold-400', bg: 'bg-gold-50', text: 'text-gold-700', btn: 'bg-gold-500 hover:bg-gold-600', icon: Crown },
 };
 
 const TIER_ORDER = ['rumput', 'wortel', 'apel'];
@@ -82,7 +82,7 @@ export default function HorseProfilePage({ horseId, navigate }: Props) {
       {/* Cover */}
       <div className="relative h-64 overflow-hidden md:h-80">
         <img src={horse.coverImage} alt={horse.name} className="h-full w-full object-cover" />
-        <div className="absolute inset-0 bg-gradient-to-t from-turf-50 via-turf-950/40 to-turf-950/30" />
+        <div className="absolute inset-0 bg-turf-950/30" />
         <button
           onClick={() => navigate('home')}
           className="absolute left-4 top-4 flex items-center gap-1.5 rounded-full bg-white/80 px-3 py-1.5 text-sm font-semibold text-turf-800 backdrop-blur transition hover:bg-white"
@@ -312,7 +312,7 @@ export default function HorseProfilePage({ horseId, navigate }: Props) {
                     className={`h-full w-full object-cover transition group-hover:scale-105 ${locked ? 'locked-blur' : ''}`}
                     loading="lazy"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-turf-950/70 to-transparent" />
+                  <div className="absolute inset-0 bg-turf-950/50" />
                   <div className={`absolute left-2 top-2 flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold ${tierStyle.bg} ${tierStyle.text}`}>
                     <Icon size={11} /> {f.type === 'video' ? 'Video' : f.type === 'report' ? 'Laporan' : 'Foto'}
                   </div>
@@ -348,7 +348,7 @@ export default function HorseProfilePage({ horseId, navigate }: Props) {
             </div>
             <button
               onClick={() => setShowSubModal(tierIndex < 1 ? 'wortel' : 'apel')}
-              className="rounded-full gold-gradient px-4 py-2 text-sm font-bold text-white shadow-sm"
+              className="rounded-full bg-gold-500 px-4 py-2 text-sm font-bold text-white shadow-sm hover:bg-gold-600"
             >
               Upgrade Sekarang
             </button>
