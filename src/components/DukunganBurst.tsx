@@ -62,7 +62,7 @@ export default function DukunganBurst({ show, amount, onDone }: Props) {
           <div className="text-6xl animate-gallop">🐴</div>
           <p className="font-display text-2xl font-extrabold text-turf-700">Terima Kasih!</p>
           <p className="text-sand-600">Kamu memberi dukungan</p>
-          <div className="coin-chip inline-flex items-center gap-2 rounded-full px-5 py-2 text-lg font-bold text-gold-800">
+          <div className="coin-chip inline-flex items-center gap-2 rounded-full px-5 py-2 text-lg font-bold text-white">
             🪙 {amount.toLocaleString('id-ID')} Jacoins
           </div>
           <p className="text-sm text-turf-600 font-semibold">Nama kamu muncul di ticker publik!</p>
