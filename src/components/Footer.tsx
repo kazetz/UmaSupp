@@ -11,8 +11,8 @@ export default function Footer({ navigate }: Props) {
         <div className="grid gap-8 md:grid-cols-4">
           <div className="md:col-span-2">
             <div className="flex items-center gap-2">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gold-500">
-                <span className="text-xl">🐴</span>
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl overflow-hidden">
+                <img src="/LOGO_PNG.png" alt="UmaSupp Logo" className="h-full w-full object-cover" />
               </div>
               <span className="font-display text-2xl font-extrabold">
                 Uma<span className="text-gold-300">Supp</span>
