@@ -12,7 +12,7 @@ const SIZES = {
 
 export default function CoinBadge({ amount, size = 'md', className = '' }: Props) {
   return (
-    <span className={`coin-chip inline-flex items-center rounded-full font-bold text-gold-800 ${SIZES[size]} ${className}`}>
+    <span className={`coin-chip inline-flex items-center rounded-full font-bold text-white ${SIZES[size]} ${className}`}>
       <span className={size === 'sm' ? 'text-sm' : 'text-base'}>🪙</span>
       {amount.toLocaleString('id-ID')}
     </span>
