@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { MessageCircle, Heart, Image as ImageIcon, Crown, TrendingUp, Palette, ScrollText, Sparkles } from 'lucide-react';
 import { FANARTS, FORUM_THREADS, SULTANS, getHorse } from '../data/seed';
 import type { Page } from '../data/types';
+import { useApp } from '../store/appStore';
 import CoinBadge from '../components/CoinBadge';
 
 interface Props {
@@ -17,26 +18,34 @@ const TAG_STYLES: Record<string, { bg: string; text: string; label: string }> = 
 };
 
 const RANK_STYLES = [
-  { ring: 'ring-gold-400', badge: 'gold-gradient', crown: true },
+  { ring: 'ring-gold-400', badge: 'bg-gold-500', crown: true },
   { ring: 'ring-sand-300', badge: 'bg-sand-400', crown: false },
   { ring: 'ring-clay-400', badge: 'bg-clay-600', crown: false },
 ];
 
 export default function CommunityPage({ navigate }: Props) {
+  const { user, sessionDukungan, isLiked, toggleLike } = useApp();
   const [tab, setTab] = useState<'fanart' | 'forum' | 'leaderboard'>('fanart');
-  const [liked, setLiked] = useState<Set<string>>(new Set());
 
-  const toggleLike = (id: string) => {
-    setLiked((prev) => {
-      const next = new Set(prev);
-      next.has(id) ? next.delete(id) : next.add(id);
-      return next;
-    });
-  };
+  // Merge seed sultans with logged-in user's session dukungan
+  const mergedSultans = useMemo(() => {
+    const list = [...SULTANS];
+    if (user && sessionDukungan > 0) {
+      list.push({
+        id: 'me',
+        name: user.name,
+        avatar: `https://api.dicebear.com/7.x/thumbs/svg?seed=${encodeURIComponent(user.name)}`,
+        spent: sessionDukungan,
+        title: 'Sultan Aktif',
+        rank: 0,
+      });
+    }
+    list.sort((a, b) => b.spent - a.spent);
+    return list.map((s, i) => ({ ...s, rank: i + 1 }));
+  }, [user, sessionDukungan]);
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
-      {/* Header */}
       <div className="text-center">
         <div className="inline-flex items-center gap-2 rounded-full bg-turf-100 px-4 py-1.5 text-sm font-bold text-turf-700">
           <MessageCircle size={16} /> Komunitas Fandom
@@ -47,7 +56,6 @@ export default function CommunityPage({ navigate }: Props) {
         </p>
       </div>
 
-      {/* Tabs */}
       <div className="mt-8 flex justify-center gap-2">
         {[
           { id: 'fanart' as const, label: 'Galeri Fanart', icon: Palette },
@@ -80,12 +88,12 @@ export default function CommunityPage({ navigate }: Props) {
             {FANARTS.map((fa) => {
               const horse = getHorse(fa.horseId);
               const tag = TAG_STYLES[fa.tag];
-              const isLiked = liked.has(fa.id);
+              const liked = isLiked(fa.id);
               return (
                 <div key={fa.id} className="break-inside-avoid overflow-hidden rounded-3xl bg-white shadow-card ring-1 ring-sand-100">
                   <div className="relative">
                     <img src={fa.image} alt={fa.title} className="w-full object-cover" loading="lazy" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-turf-950/60 to-transparent" />
+                    <div className="absolute inset-0 bg-turf-950/30" />
                     <span className={`absolute left-3 top-3 rounded-full px-2.5 py-0.5 text-[10px] font-bold ${tag.bg} ${tag.text}`}>
                       {tag.label}
                     </span>
@@ -100,20 +108,18 @@ export default function CommunityPage({ navigate }: Props) {
                       </div>
                     </div>
                     {horse && (
-                      <button
-                        onClick={() => navigate('profile', horse.id)}
-                        className="mt-2 text-xs font-semibold text-turf-600 hover:underline"
-                      >
+                      <button onClick={() => navigate('profile', horse.id)} className="mt-2 text-xs font-semibold text-turf-600 hover:underline">
                         Kuda: {horse.name} →
                       </button>
                     )}
                     <div className="mt-3 flex items-center gap-4 text-xs text-sand-500">
                       <button
                         onClick={() => toggleLike(fa.id)}
-                        className={`flex items-center gap-1 font-semibold transition ${isLiked ? 'text-clay-500' : 'hover:text-clay-500'}`}
+                        disabled={!user}
+                        className={`flex items-center gap-1 font-semibold transition disabled:opacity-50 ${liked ? 'text-clay-500' : 'hover:text-clay-500'}`}
                       >
-                        <Heart size={14} fill={isLiked ? 'currentColor' : 'none'} />
-                        {(fa.likes + (isLiked ? 1 : 0)).toLocaleString('id-ID')}
+                        <Heart size={14} fill={liked ? 'currentColor' : 'none'} />
+                        {(fa.likes + (liked ? 1 : 0)).toLocaleString('id-ID')}
                       </button>
                       <span className="flex items-center gap-1">
                         <MessageCircle size={14} />
@@ -147,12 +153,8 @@ export default function CommunityPage({ navigate }: Props) {
                     <h3 className="mt-2 font-display text-lg font-bold leading-snug text-sand-900">{t.title}</h3>
                     <p className="mt-1 text-sm leading-relaxed text-sand-600 line-clamp-2">{t.body}</p>
                     <div className="mt-3 flex items-center gap-4 text-xs text-sand-500">
-                      <span className="flex items-center gap-1">
-                        <MessageCircle size={14} /> {t.replies} balasan
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <Heart size={14} /> {t.likes}
-                      </span>
+                      <span className="flex items-center gap-1"><MessageCircle size={14} /> {t.replies} balasan</span>
+                      <span className="flex items-center gap-1"><Heart size={14} /> {t.likes}</span>
                       {horse && (
                         <button onClick={() => navigate('profile', horse.id)} className="ml-auto font-semibold text-turf-600 hover:underline">
                           {horse.name} →
@@ -173,15 +175,16 @@ export default function CommunityPage({ navigate }: Props) {
           {/* Podium top 3 */}
           <div className="mb-8 grid gap-4 sm:grid-cols-3">
             {[1, 0, 2].map((idx) => {
-              const s = SULTANS[idx];
+              const s = mergedSultans[idx];
               if (!s) return null;
-              const style = RANK_STYLES[s.rank - 1];
+              const style = RANK_STYLES[Math.min(s.rank - 1, 2)] ?? RANK_STYLES[2];
               const heightClass = s.rank === 1 ? 'sm:order-2 sm:-mt-6' : s.rank === 2 ? 'sm:order-1' : 'sm:order-3';
+              const isMe = s.id === 'me';
               return (
-                <div key={s.id} className={`relative rounded-3xl bg-white p-6 text-center shadow-card ring-2 ${style.ring} ${heightClass}`}>
+                <div key={s.id} className={`relative rounded-3xl bg-white p-6 text-center shadow-card ring-2 ${style.ring} ${heightClass} ${isMe ? 'ring-4 ring-turf-500' : ''}`}>
                   {style.crown && (
                     <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                      <div className="flex h-8 w-8 items-center justify-center rounded-full gold-gradient shadow-gold">
+                      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gold-500 shadow-sm">
                         <Crown size={16} className="text-white" />
                       </div>
                     </div>
@@ -190,7 +193,7 @@ export default function CommunityPage({ navigate }: Props) {
                     #{s.rank}
                   </div>
                   <img src={s.avatar} alt={s.name} className="mx-auto mt-3 h-14 w-14 rounded-full ring-2 ring-white shadow" />
-                  <h3 className="mt-2 font-display text-lg font-bold text-sand-900">{s.name}</h3>
+                  <h3 className="mt-2 font-display text-lg font-bold text-sand-900">{s.name}{isMe && ' (Kamu)'}</h3>
                   <p className="text-xs text-sand-500">{s.title}</p>
                   <div className="mt-3 flex justify-center">
                     <CoinBadge amount={s.spent} size="md" />
@@ -208,29 +211,31 @@ export default function CommunityPage({ navigate }: Props) {
               <h3 className="font-display text-lg font-bold text-sand-900">Papan Peringkat Sultan Bulan Ini</h3>
             </div>
             <div className="divide-y divide-sand-100">
-              {SULTANS.map((s) => (
-                <div key={s.id} className="flex items-center gap-4 px-5 py-3 transition hover:bg-turf-50">
-                  <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm font-extrabold ${
-                    s.rank <= 3 ? 'gold-gradient text-white' : 'bg-sand-100 text-sand-600'
-                  }`}>
-                    {s.rank}
-                  </span>
-                  <img src={s.avatar} alt={s.name} className="h-10 w-10 rounded-full bg-sand-100" />
-                  <div className="flex-1">
-                    <p className="font-semibold text-sand-900">{s.name}</p>
-                    <p className="text-xs text-sand-500">{s.title}</p>
+              {mergedSultans.map((s) => {
+                const isMe = s.id === 'me';
+                return (
+                  <div key={s.id} className={`flex items-center gap-4 px-5 py-3 transition hover:bg-turf-50 ${isMe ? 'bg-turf-50' : ''}`}>
+                    <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm font-extrabold ${
+                      s.rank <= 3 ? 'bg-gold-500 text-white' : 'bg-sand-100 text-sand-600'
+                    }`}>
+                      {s.rank}
+                    </span>
+                    <img src={s.avatar} alt={s.name} className="h-10 w-10 rounded-full bg-sand-100" />
+                    <div className="flex-1">
+                      <p className="font-semibold text-sand-900">{s.name}{isMe && ' (Kamu)'}</p>
+                      <p className="text-xs text-sand-500">{s.title}</p>
+                    </div>
+                    <CoinBadge amount={s.spent} size="md" />
                   </div>
-                  <CoinBadge amount={s.spent} size="md" />
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
 
           <div className="mt-6 flex items-start gap-2 rounded-2xl bg-gold-50 p-4 ring-1 ring-gold-200">
             <Sparkles size={18} className="mt-0.5 shrink-0 text-gold-500" />
             <p className="text-sm text-gold-800">
-              <strong>Kompetisi status sosial:</strong> Sultan dengan pengeluaran Jacoins terbanyak mendapat
-              pengakuan publik. Strategi yang efektif untuk mendorong partisipasi aktif Gen-Z.
+              Top leaderboard akan mendapatkan reward yang diinfokan melalui email.
             </p>
           </div>
         </div>
