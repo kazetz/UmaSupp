@@ -1,7 +1,7 @@
-export type Page = 'home' | 'profile' | 'store' | 'community' | 'marketplace';
+export type Page = 'home' | 'profile' | 'store' | 'community' | 'marketplace' | 'wisata';
 
 export interface HorseStats {
-  speed: number; // 0-100
+  speed: number;
   stamina: number;
   acceleration: number;
   power: number;
@@ -9,7 +9,7 @@ export interface HorseStats {
 
 export interface HorseRecord {
   wins: number;
-  places: number; // top 3
+  places: number;
   starts: number;
   bestTime: string;
   topTitle: string;
@@ -18,7 +18,7 @@ export interface HorseRecord {
 export interface MembershipTier {
   id: string;
   name: string;
-  price: number; // Jacoins / month
+  price: number;
   color: 'rumput' | 'wortel' | 'apel';
   perks: string[];
   badge?: string;
@@ -37,12 +37,12 @@ export interface FeedItem {
 export interface Horse {
   id: string;
   name: string;
-  stable: string; // asal peternakan
+  stable: string;
   region: string;
   image: string;
   coverImage: string;
   status: 'active' | 'retired';
-  badge: string; // e.g. "Juara 1 Derby 2025"
+  badge: string;
   bio: string;
   stats: HorseStats;
   record: HorseRecord;
@@ -58,9 +58,9 @@ export interface RescueHorse {
   name: string;
   image: string;
   story: string;
-  need: string; // e.g. "Operasi kaki"
-  raised: number; // Jacoins
-  goal: number; // Jacoins
+  need: string;
+  raised: number;
+  goal: number;
   daysLeft: number;
   urgency: 'critical' | 'high' | 'moderate';
 }
@@ -95,17 +95,17 @@ export interface SultanEntry {
   id: string;
   name: string;
   avatar: string;
-  spent: number; // Jacoins this month
-  title: string; // e.g. "Sultan Wortel"
+  spent: number;
+  title: string;
   rank: number;
 }
 
 export interface MerchItem {
   id: string;
   name: string;
-  artisan: string; // UMKM name
+  artisan: string;
   image: string;
-  price: number; // Jacoins
+  price: number;
   priceRupiah: number;
   category: 'apparel' | 'accessory' | 'photocard' | 'nfc';
   stock: number;
@@ -117,7 +117,45 @@ export interface CoinPackage {
   id: string;
   coins: number;
   priceRupiah: number;
-  bonus: number; // extra coins
+  bonus: number;
   popular?: boolean;
   bestValue?: boolean;
+}
+
+export interface User {
+  name: string;
+  loggedInAt: string;
+}
+
+export interface TicketPackage {
+  id: string;
+  name: string;
+  stable: string;
+  region: string;
+  price: number;
+  duration: string;
+  includes: string[];
+  image: string;
+  available: number;
+}
+
+export interface StableLocation {
+  id: string;
+  name: string;
+  region: string;
+  lat: number;
+  lng: number;
+  type: 'active' | 'retired' | 'rescue';
+  description: string;
+}
+
+export interface CommunityEvent {
+  id: string;
+  title: string;
+  date: string;
+  location: string;
+  region: string;
+  description: string;
+  attendees: number;
+  image: string;
 }
