@@ -1,4 +1,4 @@
-import type { Horse, RescueHorse, FanartPost, ForumThread, SultanEntry, MerchItem, CoinPackage } from './types';
+import type { Horse, RescueHorse, FanartPost, ForumThread, SultanEntry, MerchItem, CoinPackage, TicketPackage, StableLocation, CommunityEvent } from './types';
 
 export const HORSES: Horse[] = [
   {
@@ -249,6 +249,105 @@ export const MERCH: MerchItem[] = [
   { id: 'm6', name: 'Lanyard Seiun Sky', artisan: 'Studio Lensa Kreatif', image: 'https://images.pexels.com/photos/101667/pexels-photo-101667.jpeg?auto=compress&cs=tinysrgb&w=600', price: 150, priceRupiah: 18000, category: 'accessory', stock: 150, description: 'Lanyard sublimation full color dengan motif Seiun Sky.' },
   { id: 'm7', name: 'Hoodie Aku Dagadu Rising Star', artisan: 'Konveksi Karya Tangan', image: 'https://images.pexels.com/photos/7098082/pexels-photo-7098082.jpeg?auto=compress&cs=tinysrgb&w=600', price: 1200, priceRupiah: 145000, category: 'apparel', stock: 30, description: 'Hoodie fleece premium dengan sablon Rising Star. Edisi terbatas musim rookie.', badge: 'Limited' },
   { id: 'm8', name: 'Sticker Pack Moefikasi 6 Kuda', artisan: 'Illustra Studio', image: 'https://images.pexels.com/photos/4543462/pexels-photo-4543462.jpeg?auto=compress&cs=tinysrgb&w=600', price: 250, priceRupiah: 28000, category: 'accessory', stock: 300, description: 'Set 12 stiker vinyl tahan air dengan ilustrasi moefikasi semua kuda UmaSupp.', badge: 'New' },
+];
+
+export const TICKET_PACKAGES: TicketPackage[] = [
+  {
+    id: 't1',
+    name: 'Tur Edukasi Bing Chiling',
+    stable: 'Stadion Kuda Pordasi',
+    region: 'Jakarta',
+    price: 300,
+    duration: '2 jam',
+    includes: ['Tur kandang premium', 'Foto bersama Bing Chiling', 'Sesi pakan interaktif', 'Sertifikat kunjungan'],
+    image: 'https://images.pexels.com/photos/6904737/pexels-photo-6904737.jpeg?auto=compress&cs=tinysrgb&w=600',
+    available: 20,
+  },
+  {
+    id: 't2',
+    name: 'Mukbang Wortel bareng Ryo',
+    stable: 'Peternakan Sarga Timur',
+    region: 'Bogor',
+    price: 500,
+    duration: '3 jam',
+    includes: ['Sesi mukbang wortel bareng Ryo', 'Tur peternakan Sarga', 'Workshop perawatan kuda', 'Merchandise eksklusif'],
+    image: 'https://images.pexels.com/photos/4543462/pexels-photo-4543462.jpeg?auto=compress&cs=tinysrgb&w=600',
+    available: 15,
+  },
+  {
+    id: 't3',
+    name: 'Sprint Experience Sakura',
+    stable: 'Stadion Kuda Pordasi',
+    region: 'Bandung',
+    price: 400,
+    duration: '2.5 jam',
+    includes: ['Simulasi sprint dengan joki', 'Tur sirkuit latihan', 'Sesi foto di lintasan', 'Camilan kuda segar'],
+    image: 'https://images.pexels.com/photos/1848727/pexels-photo-1848727.jpeg?auto=compress&cs=tinysrgb&w=600',
+    available: 25,
+  },
+  {
+    id: 't4',
+    name: 'Legacy Tour Golden Experience',
+    stable: 'Stadion Kuda Pordasi',
+    region: 'Yogyakarta',
+    price: 600,
+    duration: '4 jam',
+    includes: ['Vlog eksklusif lokasi syuting', 'Cerita balapan legendaris', 'Kunjungan padang pensiun', 'Photocard premium'],
+    image: 'https://images.pexels.com/photos/14934378/pexels-photo-14934378.jpeg?auto=compress&cs=tinysrgb&w=600',
+    available: 10,
+  },
+];
+
+export const STABLE_LOCATIONS: StableLocation[] = [
+  { id: 'loc1', name: 'Stadion Kuda Pordasi Jakarta', region: 'Jakarta', lat: -6.2088, lng: 106.8456, type: 'active', description: 'Kandang utama Bing Chiling & Sakura Bakushin O' },
+  { id: 'loc2', name: 'Peternakan Sarga Timur Bogor', region: 'Bogor', lat: -6.5950, lng: 106.8166, type: 'active', description: 'Rumah Ryo si Bogor Glazer & Seiun Sky' },
+  { id: 'loc3', name: 'Stadion Kuda Pordasi Bandung', region: 'Bandung', lat: -6.9175, lng: 107.6191, type: 'active', description: 'Sirkuit sprint latihan' },
+  { id: 'loc4', name: 'Padang Pensiun Yogyakarta', region: 'Yogyakarta', lat: -7.7956, lng: 110.3695, type: 'retired', description: 'Rumah pensiun Golden Experience' },
+  { id: 'loc5', name: 'Pusat Penyelamatan Kuda Medan', region: 'Medan', lat: 3.5952, lng: 98.6722, type: 'rescue', description: 'Pusat rehabilitasi kuda terlantar' },
+  { id: 'loc6', name: 'Peternakan Sarga Timur Semarang', region: 'Semarang', lat: -6.9667, lng: 110.4167, type: 'active', description: 'Kandang rookie Aku Dagadu' },
+];
+
+export const COMMUNITY_EVENTS: CommunityEvent[] = [
+  {
+    id: 'ev1',
+    title: 'Derby Watch Party Bing Chiling',
+    date: '15 Agustus 2025',
+    location: 'Stadion Kuda Pordasi',
+    region: 'Jakarta',
+    description: 'Nonton bareng Derby Nusantara 2025 di tribun VIP. Termasuk meet & greet dengan joki.',
+    attendees: 320,
+    image: 'https://images.pexels.com/photos/27981630/pexels-photo-27981630.jpeg?auto=compress&cs=tinysrgb&w=600',
+  },
+  {
+    id: 'ev2',
+    title: 'Mukbang Festival Wortel Ryo',
+    date: '2 September 2025',
+    location: 'Peternakan Sarga Timur',
+    region: 'Bogor',
+    description: 'Festival mukbang wortel massal bareng Ryo si Bogor Glazer. Bawa wortel sendiri!',
+    attendees: 180,
+    image: 'https://images.pexels.com/photos/4543462/pexels-photo-4543462.jpeg?auto=compress&cs=tinysrgb&w=600',
+  },
+  {
+    id: 'ev3',
+    title: 'Sprint Showcase Sakura Bakushin O',
+    date: '20 September 2025',
+    location: 'Stadion Kuda Pordasi',
+    region: 'Bandung',
+    description: 'Demo sprint eksklusif Sakura di sirkuit latihan. Tiket terbatas untuk penggemar.',
+    attendees: 250,
+    image: 'https://images.pexels.com/photos/6904737/pexels-photo-6904737.jpeg?auto=compress&cs=tinysrgb&w=600',
+  },
+  {
+    id: 'ev4',
+    title: 'Legacy Gathering Golden Experience',
+    date: '5 Oktober 2025',
+    location: 'Padang Pensiun',
+    region: 'Yogyakarta',
+    description: 'Acara tribute untuk Golden Experience. Cerita malam dengan api unggun di padang.',
+    attendees: 150,
+    image: 'https://images.pexels.com/photos/14934378/pexels-photo-14934378.jpeg?auto=compress&cs=tinysrgb&w=600',
+  },
 ];
 
 export function getHorse(id: string): Horse | undefined {
