@@ -3,15 +3,14 @@ interface Props {
   max: number;
   label?: string;
   color?: 'gold' | 'turf' | 'clay';
-  showShine?: boolean;
   height?: 'sm' | 'md' | 'lg';
   animated?: boolean;
 }
 
 const COLORS = {
-  gold: 'gold-gradient',
-  turf: 'bg-gradient-to-r from-turf-500 to-turf-700',
-  clay: 'bg-gradient-to-r from-clay-400 to-clay-600',
+  gold: 'bg-gold-500',
+  turf: 'bg-turf-600',
+  clay: 'bg-clay-500',
 };
 
 export default function ProgressBar({
@@ -19,7 +18,6 @@ export default function ProgressBar({
   max,
   label,
   color = 'gold',
-  showShine = true,
   height = 'md',
   animated = true,
 }: Props) {
@@ -38,7 +36,7 @@ export default function ProgressBar({
       )}
       <div className={`relative ${h} w-full rounded-full bg-sand-200 overflow-hidden`}>
         <div
-          className={`absolute inset-y-0 left-0 rounded-full ${COLORS[color]} ${showShine ? 'bar-shine' : ''} ${animated ? 'animate-grow-bar' : ''}`}
+          className={`absolute inset-y-0 left-0 rounded-full ${COLORS[color]} ${animated ? 'animate-grow-bar' : ''}`}
           style={{ width: `${pct}%` }}
         />
       </div>
