@@ -6,12 +6,12 @@ interface Props {
 
 export default function Footer({ navigate }: Props) {
   return (
-    <footer className="mt-20 turf-pattern text-white">
+    <footer className="mt-20 bg-turf-700 text-white">
       <div className="mx-auto max-w-7xl px-6 py-12">
         <div className="grid gap-8 md:grid-cols-4">
           <div className="md:col-span-2">
             <div className="flex items-center gap-2">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl gold-gradient">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gold-500">
                 <span className="text-xl">🐴</span>
               </div>
               <span className="font-display text-2xl font-extrabold">
@@ -33,6 +33,7 @@ export default function Footer({ navigate }: Props) {
               <li><button onClick={() => navigate('home')} className="hover:text-white">Beranda</button></li>
               <li><button onClick={() => navigate('store')} className="hover:text-white">Toko Jacoins</button></li>
               <li><button onClick={() => navigate('community')} className="hover:text-white">Uma Community</button></li>
+              <li><button onClick={() => navigate('wisata')} className="hover:text-white">Wisata &amp; Agrowisata</button></li>
               <li><button onClick={() => navigate('marketplace')} className="hover:text-white">Marketplace UMKM</button></li>
             </ul>
           </div>
