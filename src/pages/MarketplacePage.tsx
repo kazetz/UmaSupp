@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ShoppingCart, Plus, Minus, Trash2, Store, Tag, ShieldCheck, Check, Package } from 'lucide-react';
+import { ShoppingCart, Plus, Minus, Trash2, Store, Tag, ShieldCheck, Check, Package, MapPin } from 'lucide-react';
 import { MERCH } from '../data/seed';
 import { useApp } from '../store/appStore';
 import CoinBadge from '../components/CoinBadge';
@@ -13,14 +13,32 @@ const CATEGORIES = [
   { id: 'nfc', label: 'NFC Tech' },
 ];
 
+const PICKUP_LOCATIONS = [
+  'Stadion Kuda Pordasi — Jakarta',
+  'Peternakan Sarga Timur — Bogor',
+  'Stadion Kuda Pordasi — Bandung',
+  'Padang Pensiun — Yogyakarta',
+];
+
 export default function MarketplacePage() {
-  const { cart, addToCart, removeFromCart, updateCartQty, clearCart, balance, spend } = useApp();
+  const { cart, addToCart, removeFromCart, updateCartQty, clearCart, balance, buyMerch, merchStock } = useApp();
   const [cat, setCat] = useState('all');
   const [cartOpen, setCartOpen] = useState(false);
   const [checkoutStep, setCheckoutStep] = useState<'cart' | 'pay' | 'done'>('cart');
   const [payMethod, setPayMethod] = useState<'jacoins' | 'rupiah'>('jacoins');
+  const [pickupOption, setPickupOption] = useState<'delivery' | 'pickup'>('pickup');
+  const [pickupLocation, setPickupLocation] = useState(PICKUP_LOCATIONS[0]);
   const [processing, setProcessing] = useState(false);
   const [error, setError] = useState('');
+
+  const getStock = (id: string) => {
+    const override = merchStock[id];
+    if (override !== undefined) {
+      const orig = MERCH.find((m) => m.id === id)?.stock ?? 0;
+      return Math.max(0, orig + override);
+    }
+    return MERCH.find((m) => m.id === id)?.stock ?? 0;
+  };
 
   const filtered = cat === 'all' ? MERCH : MERCH.filter((m) => m.category === cat);
 
@@ -45,13 +63,11 @@ export default function MarketplacePage() {
     setProcessing(true);
     setError('');
     setTimeout(() => {
-      if (payMethod === 'jacoins') {
-        if (balance < totalJacoins) {
-          setError('Jacoins tidak cukup. Top-up dulu atau bayar dengan Rupiah.');
-          setProcessing(false);
-          return;
-        }
-        spend(totalJacoins);
+      const ok = buyMerch(cart, payMethod === 'jacoins', totalJacoins);
+      if (!ok && payMethod === 'jacoins') {
+        setError('Jacoins tidak cukup. Top-up dulu atau bayar dengan Rupiah.');
+        setProcessing(false);
+        return;
       }
       setProcessing(false);
       setCheckoutStep('done');
@@ -61,7 +77,6 @@ export default function MarketplacePage() {
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
-      {/* Header */}
       <div className="text-center">
         <div className="inline-flex items-center gap-2 rounded-full bg-clay-100 px-4 py-1.5 text-sm font-bold text-clay-700">
           <Store size={16} /> Creative Marketplace UMKM
@@ -72,7 +87,6 @@ export default function MarketplacePage() {
         </p>
       </div>
 
-      {/* Category filter */}
       <div className="mt-8 flex flex-wrap justify-center gap-2">
         {CATEGORIES.map((c) => (
           <button
@@ -87,43 +101,52 @@ export default function MarketplacePage() {
         ))}
       </div>
 
-      {/* Grid */}
       <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 stagger">
-        {filtered.map((m) => (
-          <div key={m.id} className="lift group flex flex-col overflow-hidden rounded-3xl bg-white shadow-card ring-1 ring-sand-100">
-            <div className="relative h-52 overflow-hidden">
-              <img src={m.image} alt={m.name} className="h-full w-full object-cover transition group-hover:scale-105" loading="lazy" />
-              <div className="absolute inset-0 bg-gradient-to-t from-turf-950/30 to-transparent" />
-              {m.badge && (
-                <span className="absolute left-3 top-3 rounded-full gold-gradient px-2.5 py-0.5 text-[10px] font-extrabold uppercase tracking-wide text-white shadow">
-                  {m.badge}
+        {filtered.map((m) => {
+          const stock = getStock(m.id);
+          const outOfStock = stock <= 0;
+          return (
+            <div key={m.id} className={`lift group flex flex-col overflow-hidden rounded-3xl bg-white shadow-card ring-1 ring-sand-100 ${outOfStock ? 'opacity-60' : ''}`}>
+              <div className="relative h-52 overflow-hidden">
+                <img src={m.image} alt={m.name} className="h-full w-full object-cover transition group-hover:scale-105" loading="lazy" />
+                <div className="absolute inset-0 bg-turf-950/20" />
+                {m.badge && (
+                  <span className="absolute left-3 top-3 rounded-full bg-gold-500 px-2.5 py-0.5 text-[10px] font-extrabold uppercase tracking-wide text-white shadow">
+                    {m.badge}
+                  </span>
+                )}
+                <span className="absolute right-3 top-3 rounded-full bg-white/90 px-2.5 py-0.5 text-[10px] font-bold text-sand-600">
+                  Stok: {stock}
                 </span>
-              )}
-              <span className="absolute right-3 top-3 rounded-full bg-white/90 px-2.5 py-0.5 text-[10px] font-bold text-sand-600">
-                Stok: {m.stock}
-              </span>
-            </div>
-            <div className="flex flex-1 flex-col p-4">
-              <h3 className="font-display text-base font-bold leading-snug text-sand-900">{m.name}</h3>
-              <p className="mt-1 flex items-center gap-1 text-xs text-clay-600">
-                <Tag size={11} /> {m.artisan}
-              </p>
-              <p className="mt-2 text-xs leading-relaxed text-sand-500 line-clamp-2">{m.description}</p>
-              <div className="mt-3 flex items-end justify-between">
-                <div>
-                  <CoinBadge amount={m.price} size="sm" />
-                  <p className="mt-1 text-xs font-semibold text-sand-500">atau Rp{m.priceRupiah.toLocaleString('id-ID')}</p>
+                {outOfStock && (
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <span className="rounded-full bg-clay-500 px-4 py-1 text-sm font-bold text-white">Habis</span>
+                  </div>
+                )}
+              </div>
+              <div className="flex flex-1 flex-col p-4">
+                <h3 className="font-display text-base font-bold leading-snug text-sand-900">{m.name}</h3>
+                <p className="mt-1 flex items-center gap-1 text-xs text-clay-600">
+                  <Tag size={11} /> {m.artisan}
+                </p>
+                <p className="mt-2 text-xs leading-relaxed text-sand-500 line-clamp-2">{m.description}</p>
+                <div className="mt-3 flex items-end justify-between">
+                  <div>
+                    <CoinBadge amount={m.price} size="sm" />
+                    <p className="mt-1 text-xs font-semibold text-sand-500">atau Rp{m.priceRupiah.toLocaleString('id-ID')}</p>
+                  </div>
+                  <button
+                    onClick={() => addToCart(m.id)}
+                    disabled={outOfStock}
+                    className="flex items-center gap-1 rounded-xl bg-turf-600 px-3 py-2 text-sm font-bold text-white transition hover:bg-turf-700 disabled:opacity-50"
+                  >
+                    <Plus size={16} /> Keranjang
+                  </button>
                 </div>
-                <button
-                  onClick={() => addToCart(m.id)}
-                  className="flex items-center gap-1 rounded-xl bg-turf-600 px-3 py-2 text-sm font-bold text-white transition hover:bg-turf-700"
-                >
-                  <Plus size={16} /> Keranjang
-                </button>
               </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {/* UMKM info */}
@@ -142,7 +165,6 @@ export default function MarketplacePage() {
         </div>
       </div>
 
-      {/* Floating cart button (mobile) */}
       {cartCount > 0 && (
         <button
           onClick={openCart}
@@ -153,9 +175,7 @@ export default function MarketplacePage() {
         </button>
       )}
 
-      {/* Cart / Checkout modal */}
       <Modal open={cartOpen} onClose={() => setCartOpen(false)} title={checkoutStep === 'done' ? '' : 'Keranjang Belanja'} size="lg">
-        {/* Cart view */}
         {checkoutStep === 'cart' && (
           <div className="space-y-4">
             {cartItems.length === 0 ? (
@@ -208,7 +228,6 @@ export default function MarketplacePage() {
           </div>
         )}
 
-        {/* Payment view */}
         {checkoutStep === 'pay' && (
           <div className="space-y-5">
             <h3 className="font-display text-lg font-extrabold text-sand-900">Pilih Metode Pembayaran</h3>
@@ -244,6 +263,45 @@ export default function MarketplacePage() {
               </button>
             </div>
 
+            {/* Pickup option */}
+            <div className="rounded-2xl bg-turf-50 p-4 ring-1 ring-turf-200">
+              <p className="mb-3 text-sm font-bold text-turf-800">Opsi Pengambilan Suvenir</p>
+              <div className="space-y-2">
+                <label className={`flex cursor-pointer items-center gap-3 rounded-xl p-3 ring-2 transition ${pickupOption === 'pickup' ? 'bg-white ring-turf-500' : 'bg-white/50 ring-transparent'}`}>
+                  <input type="radio" checked={pickupOption === 'pickup'} onChange={() => setPickupOption('pickup')} className="accent-turf-600" />
+                  <MapPin size={18} className="text-turf-600" />
+                  <div className="flex-1">
+                    <p className="text-sm font-bold text-sand-900">Ambil di Lokasi Peternakan Mitra</p>
+                    <p className="text-xs text-sand-500">Gratis ongkir + sekalian wisata!</p>
+                  </div>
+                </label>
+                {pickupOption === 'pickup' && (
+                  <select
+                    value={pickupLocation}
+                    onChange={(e) => setPickupLocation(e.target.value)}
+                    className="w-full rounded-xl border-2 border-turf-200 px-3 py-2 text-sm text-sand-900 outline-none focus:border-turf-500"
+                  >
+                    {PICKUP_LOCATIONS.map((loc) => (
+                      <option key={loc} value={loc}>{loc}</option>
+                    ))}
+                  </select>
+                )}
+                <label className={`flex cursor-pointer items-center gap-3 rounded-xl p-3 ring-2 transition ${pickupOption === 'delivery' ? 'bg-white ring-turf-500' : 'bg-white/50 ring-transparent'}`}>
+                  <input type="radio" checked={pickupOption === 'delivery'} onChange={() => setPickupOption('delivery')} className="accent-turf-600" />
+                  <Package size={18} className="text-sand-500" />
+                  <div className="flex-1">
+                    <p className="text-sm font-bold text-sand-900">Kirim ke Alamat</p>
+                    <p className="text-xs text-sand-500">Ongkir sesuai kurir (+Rp15.000)</p>
+                  </div>
+                </label>
+              </div>
+              {pickupOption === 'pickup' && (
+                <p className="mt-3 text-xs font-semibold text-turf-600">
+                  Dengan mengambil di lokasi, kamu sekaligus berwisata & berinteraksi langsung dengan kuda!
+                </p>
+              )}
+            </div>
+
             {payMethod === 'jacoins' && (
               <div className="rounded-2xl bg-turf-50 p-3 text-sm">
                 <p className="text-xs font-semibold text-sand-600">Saldo Jacoins: {balance.toLocaleString('id-ID')}</p>
@@ -262,7 +320,7 @@ export default function MarketplacePage() {
               <button
                 onClick={handleCheckout}
                 disabled={processing}
-                className={`flex-1 rounded-xl py-3.5 font-bold text-white shadow-sm disabled:opacity-60 ${payMethod === 'jacoins' ? 'gold-gradient' : 'bg-turf-600'}`}
+                className={`flex-1 rounded-xl py-3.5 font-bold text-white shadow-sm disabled:opacity-60 ${payMethod === 'jacoins' ? 'bg-gold-500 hover:bg-gold-600' : 'bg-turf-600'}`}
               >
                 {processing ? (
                   <span className="flex items-center justify-center gap-2">
@@ -277,14 +335,17 @@ export default function MarketplacePage() {
           </div>
         )}
 
-        {/* Done view */}
         {checkoutStep === 'done' && (
           <div className="space-y-4 py-6 text-center">
             <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-turf-100">
               <Check size={40} className="text-turf-600" />
             </div>
             <h3 className="font-display text-2xl font-extrabold text-turf-700">Pesanan Berhasil!</h3>
-            <p className="text-sand-500">Pesananmu akan diproses oleh mitra UMKM dan dikirim segera.</p>
+            <p className="text-sand-500">
+              {pickupOption === 'pickup'
+                ? `Ambil suvenirmu di ${pickupLocation}. Sekalian berwisata!`
+                : 'Pesananmu akan diproses oleh mitra UMKM dan dikirim segera.'}
+            </p>
             <div className="mx-auto max-w-xs rounded-2xl bg-sand-50 p-4 text-left">
               <p className="flex items-center gap-2 text-sm text-sand-600">
                 <Package size={16} className="text-clay-500" /> {cartCount} item dipesan
@@ -292,6 +353,11 @@ export default function MarketplacePage() {
               <p className="flex items-center gap-2 text-sm text-sand-600">
                 <ShieldCheck size={16} className="text-turf-600" /> Dibayar via {payMethod === 'jacoins' ? 'Jacoins' : 'Kasir Pintar'}
               </p>
+              {pickupOption === 'pickup' && (
+                <p className="flex items-center gap-2 text-sm text-sand-600">
+                  <MapPin size={16} className="text-turf-600" /> {pickupLocation}
+                </p>
+              )}
             </div>
             <button onClick={() => setCartOpen(false)} className="w-full rounded-xl bg-turf-600 py-3.5 font-bold text-white">
               Selesai
