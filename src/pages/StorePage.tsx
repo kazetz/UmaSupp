@@ -54,7 +54,7 @@ export default function StorePage() {
           <Wallet size={16} /> Toko Jacoins
         </div>
         <h1 className="mt-4 font-display text-4xl font-extrabold text-turf-800 md:text-5xl">
-          Top-up <span className="shimmer-text">Jacoins</span>
+          Top-up <span className="text-gold-600">Jacoins</span>
         </h1>
         <p className="mx-auto mt-3 max-w-xl text-sand-500">
           Jacoins (Jaran Coin) adalah mata uang digital platform. Gunakan untuk beri dukungan, berlangganan, dan belanja merchandise.
@@ -78,7 +78,7 @@ export default function StorePage() {
               }`}
             >
               {p.popular && (
-                <div className="absolute right-0 top-0 rounded-bl-2xl gold-gradient px-3 py-1 text-[10px] font-extrabold uppercase tracking-wider text-white">
+                <div className="absolute right-0 top-0 rounded-bl-2xl bg-gold-500 px-3 py-1 text-[10px] font-extrabold uppercase tracking-wider text-white">
                   Populer
                 </div>
               )}
@@ -89,7 +89,7 @@ export default function StorePage() {
               )}
 
               <div className={`flex h-16 w-16 items-center justify-center rounded-2xl ${
-                p.popular ? 'gold-gradient' : p.bestValue ? 'bg-turf-600' : 'bg-turf-100'
+                p.popular ? 'bg-gold-500' : p.bestValue ? 'bg-turf-600' : 'bg-turf-100'
               }`}>
                 <span className="text-3xl animate-coin-spin">🪙</span>
               </div>
@@ -152,7 +152,7 @@ export default function StorePage() {
             {/* Step: select */}
             {step === 'select' && (
               <>
-                <div className="flex items-center gap-4 rounded-2xl gold-gradient p-4 text-white">
+                <div className="flex items-center gap-4 rounded-2xl bg-gold-500 p-4 text-white">
                   <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/20">
                     <span className="text-3xl">🪙</span>
                   </div>
@@ -189,7 +189,7 @@ export default function StorePage() {
                   </div>
                 </div>
 
-                <button onClick={proceedToPay} className="w-full rounded-xl gold-gradient py-3.5 font-bold text-white shadow-gold">
+                <button onClick={proceedToPay} className="w-full rounded-xl bg-gold-500 py-3.5 font-bold text-white shadow-sm hover:bg-gold-600">
                   Lanjut Bayar
                 </button>
               </>
@@ -241,7 +241,7 @@ export default function StorePage() {
                 </div>
                 <h3 className="font-display text-2xl font-extrabold text-turf-700">Pembayaran Berhasil!</h3>
                 <p className="text-sand-500">Jacoins sudah masuk ke dompetmu.</p>
-                <div className="rounded-2xl gold-gradient p-4 text-white">
+                <div className="rounded-2xl bg-gold-500 p-4 text-white">
                   <p className="text-sm text-gold-100">Saldo sekarang</p>
                   <p className="font-display text-3xl font-extrabold">
                     {(balance).toLocaleString('id-ID')} 🪙
