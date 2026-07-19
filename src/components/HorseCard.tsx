@@ -16,9 +16,9 @@ const ACCENT_RING: Record<string, string> = {
 };
 
 const ACCENT_BAR: Record<string, string> = {
-  gold: 'gold-gradient',
-  silver: 'bg-gradient-to-r from-sand-300 to-sand-500',
-  clay: 'bg-gradient-to-r from-clay-400 to-clay-600',
+  gold: 'bg-gold-500',
+  silver: 'bg-sand-400',
+  clay: 'bg-clay-500',
 };
 
 export default function HorseCard({ horse, onClick, rank }: Props) {
@@ -31,25 +31,20 @@ export default function HorseCard({ horse, onClick, rank }: Props) {
       onClick={onClick}
       className={`lift group relative flex flex-col overflow-hidden rounded-3xl bg-white text-left shadow-card ring-2 ${ACCENT_RING[horse.accent]} focus:outline-none focus:ring-4`}
     >
-      {/* rank badge */}
       {rank && (
-        <div className="absolute left-3 top-3 z-20 flex h-9 w-9 items-center justify-center rounded-full font-display text-lg font-extrabold text-white shadow-md gold-gradient">
+        <div className="absolute left-3 top-3 z-20 flex h-9 w-9 items-center justify-center rounded-full font-display text-lg font-extrabold text-white shadow-md bg-gold-500">
           {rank}
         </div>
       )}
 
-      {/* tier badge */}
       {tierLabel && (
-        <div className="absolute right-3 top-3 z-20 rounded-full bg-turf-700/90 px-3 py-1 text-[10px] font-bold uppercase tracking-wide text-white backdrop-blur">
+        <div className="absolute right-3 top-3 z-20 rounded-full bg-turf-700 px-3 py-1 text-[10px] font-bold uppercase tracking-wide text-white">
           {tierLabel}
         </div>
       )}
 
-      {/* image with overlap effect */}
       <div className="relative h-56 overflow-hidden">
         <div className={`absolute inset-0 ${ACCENT_BAR[horse.accent]} opacity-90`} />
-        <div className="absolute inset-0 turf-pattern opacity-30" />
-        {/* horse popping out */}
         <img
           src={horse.image}
           alt={horse.name}
@@ -57,7 +52,6 @@ export default function HorseCard({ horse, onClick, rank }: Props) {
           className="absolute -bottom-2 left-1/2 h-64 w-64 -translate-x-1/2 object-cover transition-transform duration-500 group-hover:scale-110 group-hover:-translate-y-1"
           style={{ clipPath: 'ellipse(45% 55% at 50% 45%)' }}
         />
-        {/* status badge */}
         <div className="absolute bottom-2 left-3 z-10">
           <span
             className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wide ${
@@ -69,7 +63,6 @@ export default function HorseCard({ horse, onClick, rank }: Props) {
         </div>
       </div>
 
-      {/* body */}
       <div className="flex flex-1 flex-col gap-2 p-4">
         <div>
           <h3 className="font-display text-xl font-extrabold leading-tight text-sand-900">{horse.name}</h3>
