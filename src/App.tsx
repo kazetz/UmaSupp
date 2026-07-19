@@ -7,6 +7,7 @@ import HorseProfilePage from './pages/HorseProfilePage';
 import StorePage from './pages/StorePage';
 import CommunityPage from './pages/CommunityPage';
 import MarketplacePage from './pages/MarketplacePage';
+import WisataPage from './pages/WisataPage';
 import type { Page } from './data/types';
 
 function AppContent() {
@@ -19,7 +20,6 @@ function AppContent() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  // update document title per page
   useEffect(() => {
     const titles: Record<Page, string> = {
       home: 'UmaSupp — Beranda',
@@ -27,6 +27,7 @@ function AppContent() {
       store: 'UmaSupp — Toko Jacoins',
       community: 'UmaSupp — Uma Community',
       marketplace: 'UmaSupp — Marketplace',
+      wisata: 'UmaSupp — Wisata & Agrowisata',
     };
     document.title = titles[page];
   }, [page]);
@@ -41,6 +42,7 @@ function AppContent() {
         {page === 'store' && <StorePage />}
         {page === 'community' && <CommunityPage navigate={navigate} />}
         {page === 'marketplace' && <MarketplacePage />}
+        {page === 'wisata' && <WisataPage />}
       </main>
 
       <Footer navigate={navigate} />
